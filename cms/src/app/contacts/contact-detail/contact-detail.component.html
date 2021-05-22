@@ -1,7 +1,7 @@
 <div class="panel panel-default">
   <div class="panel-heading clearfix">
     <h3>{{ selectedContact.name }}</h3>
-    <img src="{{ selectedContact.imageUrl }}" alt="{{ selectedContact.name }}" class="img-responsive pull-left" style="max-height: 50px;">
+    <img *ngIf="selectedContact.imageUrl !== ' '" src="{{ selectedContact.imageUrl }}" alt="{{ selectedContact.name }}" class="img-responsive pull-left" style="max-height: 50px;">
     <button class="btn btn-danger pull-right">Delete</button>
     <button class="btn btn-primary pull-right">Edit</button>
   </div>
