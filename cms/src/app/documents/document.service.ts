@@ -1,18 +1,18 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subscription, Observable, throwError } from 'rxjs';
 import { Subject } from 'rxjs';
 import { Document } from './document.model';
-import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DocumentService {
   @Output() documentSelectedEvent: EventEmitter<Document> = new EventEmitter<Document>();
-//   @Output() documentChangedEvent: EventEmitter<Document[]> = new EventEmitter<Document[]>();
   documentListChangedEvent = new Subject<Document[]>();
 
   documents: Document[] = [];
-  maxDocumentId: number;
+  maxDocumentId: number = 0;
 
   getDocuments(): Document[] {
     return this.documents.slice();
@@ -39,7 +39,7 @@ export class DocumentService {
     this.maxDocumentId++;
     newDocument.id = this.maxDocumentId.toString();
     this.documents.push(newDocument);
-    this.documentListChangedEvent.next(this.documents.slice());
+    this.storeDocuments();
   }
 
   updateDocument(originalDocument: Document, newDocument: Document) {
@@ -48,7 +48,7 @@ export class DocumentService {
     if (position < 0) return;
     newDocument.id = originalDocument.id;
     this.documents[position] = newDocument;
-    this.documentListChangedEvent.next(this.documents.slice());
+    this.storeDocuments();
   }
 
   deleteDocument(document: Document) {
@@ -56,12 +56,26 @@ export class DocumentService {
     const position = this.documents.indexOf(document);
     if (position < 0) return;
     this.documents.splice(position, 1);
-//     this.documentChangedEvent.emit(this.documents.slice());
-    this.documentListChangedEvent.next(this.documents.slice());
+    this.storeDocuments();
   }
 
-  constructor() {
-    this.documents = MOCKDOCUMENTS;
-    this.maxDocumentId = this.getMaxId();
+  storeDocuments() {
+    const documentsJson = JSON.stringify(this.documents);
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      })
+    }
+    this.http.put<Document[]>('https://wdd-430-cms-b60cd-default-rtdb.firebaseio.com/documents.json', documentsJson, httpOptions).subscribe(() => this.documentListChangedEvent.next(this.documents.slice()));
+
+  }
+
+  constructor(private http: HttpClient) {
+    this.http.get<Document[]>('https://wdd-430-cms-b60cd-default-rtdb.firebaseio.com/documents.json').subscribe((documentsList: Document[]) => {
+        this.documents = documentsList;
+        this.maxDocumentId = this.getMaxId();
+        this.documents.sort((a, b) => parseInt(a.id) > parseInt(b.id) ? 1 : 0);
+        this.documentListChangedEvent.next(this.documents.slice());
+      }, (error: any) => { console.log(error); });
   }
 }

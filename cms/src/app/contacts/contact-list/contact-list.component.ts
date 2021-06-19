@@ -10,8 +10,12 @@ import { ContactService } from '../contact.service';
 })
 export class ContactListComponent implements OnInit, OnDestroy {
   contacts: Contact[] = [];
-
+  term: string = '';
   subscription?: Subscription;
+
+  search(value: string) {
+    this.term = value;
+  }
 
   constructor(private contactService: ContactService) { }
 

@@ -1,18 +1,18 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subscription, Observable, throwError } from 'rxjs';
 import { Subject } from 'rxjs';
 import { Contact } from './contact.model';
-import { MOCKCONTACTS } from './MOCKCONTACTS';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ContactService {
   @Output() contactSelectedEvent: EventEmitter<Contact> = new EventEmitter<Contact>();
-//   @Output() contactChangedEvent: EventEmitter<Contact[]> = new EventEmitter<Contact[]>();
   contactListChangedEvent = new Subject<Contact[]>();
 
   contacts: Contact[] = [];
-  maxContactId: number;
+  maxContactId: number = 0;
 
   getContacts(): Contact[] {
     return this.contacts.slice();
@@ -39,7 +39,7 @@ export class ContactService {
     this.maxContactId++;
     newContact.id = this.maxContactId.toString();
     this.contacts.push(newContact);
-    this.contactListChangedEvent.next(this.contacts.slice());
+    this.storeContacts()
   }
 
   updateContact(originalContact: Contact, newContact: Contact) {
@@ -48,7 +48,7 @@ export class ContactService {
     if (position < 0) return;
     newContact.id = originalContact.id;
     this.contacts[position] = newContact;
-    this.contactListChangedEvent.next(this.contacts.slice());
+    this.storeContacts()
   }
 
   deleteContact(contact: Contact) {
@@ -56,12 +56,26 @@ export class ContactService {
     const position = this.contacts.indexOf(contact);
     if (position < 0) return;
     this.contacts.splice(position, 1);
-//     this.contactChangedEvent.emit(this.contacts.slice());
-    this.contactListChangedEvent.next(this.contacts.slice());
+    this.storeContacts()
   }
 
-  constructor() {
-    this.contacts = MOCKCONTACTS;
-    this.maxContactId = this.getMaxId();
+  storeContacts() {
+    const contactsJson = JSON.stringify(this.contacts);
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      })
+    }
+    this.http.put<Contact[]>('https://wdd-430-cms-b60cd-default-rtdb.firebaseio.com/contacts.json', contactsJson, httpOptions).subscribe(() => this.contactListChangedEvent.next(this.contacts.slice()));
+
+  }
+
+  constructor(private http: HttpClient) {
+    this.http.get<Contact[]>('https://wdd-430-cms-b60cd-default-rtdb.firebaseio.com/contacts.json').subscribe((contactsList: Contact[]) => {
+        this.contacts = contactsList;
+        this.maxContactId = this.getMaxId();
+        this.contacts.sort((a, b) => parseInt(a.id) > parseInt(b.id) ? 1 : 0);
+           this.contactListChangedEvent.next(this.contacts.slice());
+      }, (error: any) => { console.log(error); });
   }
 }
