@@ -4,14 +4,14 @@ nav {
   justify-content: space-between;
   flex-wrap: wrap;
   padding: 1em;
-  background-color: brown;
+  background-color: var(--header-bg);
 }
 header a {
-  color: white;
+  color: var(--header-text-color);
   text-decoration: none;
   border-bottom: 2px solid transparent;
 }
-header a:hover { border-bottom-color: white; }
+header a:hover { border-bottom-color: var(--header-text-color); }
 #logotype { margin: 0; }
 nav ul {
   display: flex;
@@ -20,4 +20,7 @@ nav ul {
 }
 nav li:not(:first-child) {
   margin-left: 1em;
+}
+main {
+  padding: 1em;
 }

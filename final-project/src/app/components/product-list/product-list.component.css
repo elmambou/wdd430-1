@@ -1,1 +1,8 @@
-
+ul {
+  padding: 0;
+  list-style: none;
+}
+label {
+  display: block;
+  padding: 0.5em 2em;
+}

@@ -1,1 +1,21 @@
-<p>product-list works!</p>
+<ng-container *ngFor="let category of productService.categories">
+  <ng-container *ngIf="(products|included|productsByCategory:category).length > 0">
+    <h2>{{category}}</h2>
+    <ul>
+      <li *ngFor="let product of products|included|productsByCategory:category">
+        <label>
+          <input type="checkbox">
+          {{product.name}}
+        </label>
+      </li>
+    </ul>
+  </ng-container>
+</ng-container>
+<div *ngIf="(products|included).length == 0">
+  <p>Your shopping list is empty! To get started:</p>
+  <ol>
+    <li>Tap [+] to start a list of the items you regularly buy.</li>
+    <li>On the Planning tab, mark the items you want to include on your shopping list.</li>
+    <li>Come back to this page when you’re at the store!</li>
+  </ol>
+</div>

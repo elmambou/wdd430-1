@@ -1,1 +1,50 @@
-<p>product-edit works!</p>
+<form
+  (ngSubmit)="onSave(f, product)" #f="ngForm">
+  <div>
+    <label for="name-{{product.id}}">Name:</label>
+    <input
+      type="text"
+      class="form-control required"
+      id="name-{{product.id}}"
+      name="name"
+      [ngModel]="product.name"
+      #name="ngModel"
+      required
+    >
+  </div>
+
+  <div>
+    <label for="category-{{product.id}}">Category:</label>
+    <select
+      class="form-control required"
+      id="category-{{product.id}}"
+      name="category"
+      [ngModel]="product.category"
+      #category="ngModel"
+      required
+    >
+      <option *ngFor="let category of productService.categories" [value]="category">{{category}}</option>
+    </select>
+  </div>
+
+  <div>
+    <label>
+      <input
+        type="checkbox"
+        class="form-control required"
+        id="included-{{product.id}}"
+        name="included"
+        [ngModel]="product.included"
+        #included="ngModel"
+        (change)="onSave(f, product)"
+      >
+      Included
+    </label>
+  </div>
+
+  <div>
+    <button class="btn btn-primary" type="button" (click)="onDelete(product)">Delete</button>
+    <button class="btn btn-success" type="submit" *ngIf="(name.dirty || category.dirty) && f.valid">Save</button>
+  </div>
+
+</form>

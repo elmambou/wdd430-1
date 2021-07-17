@@ -21,10 +21,10 @@ router.post('/', (req, res, next) => {
     .sort('-id')
     .then(previousProduct => {
       let nextId = 1;
-      if (previousProduct) nextId = previousProduct.id++;
-      
+      if (previousProduct) nextId = previousProduct.id + 1;
+
       const product = new Product({
-        id: maxProductId,
+        id: nextId,
         name: req.body.name,
         category: req.body.category,
         included: req.body.included
@@ -38,14 +38,16 @@ router.post('/', (req, res, next) => {
           });
         })
         .catch(error => {
-           res.status(500).json({
-              message: 'An error occurred.',
-              error: error
-            });
+          console.log(error);
+          res.status(500).json({
+            message: 'An error occurred.',
+            error: error
+          });
         });
 
     })
     .catch(error => {
+      console.log(error);
       res.status(500).json({
         message: 'Error finding previous product ID.',
         error: { product: 'Error finding previous product ID.'}
@@ -68,13 +70,14 @@ router.put('/:id', (req, res, next) => {
           })
         })
         .catch(error => {
-           res.status(500).json({
-           message: 'An error occurred.',
-           error: error
-         });
+          res.status(500).json({
+          message: 'An error occurred.',
+          error: error
         });
+      });
     })
     .catch(error => {
+      console.log(error);
       res.status(500).json({
         message: 'Product not found.',
         error: { product: 'Product not found.'}
@@ -92,13 +95,15 @@ router.delete("/:id", (req, res, next) => {
           });
         })
         .catch(error => {
-           res.status(500).json({
-           message: 'An error occurred.',
-           error: error
-         });
-        })
+          console.log(error);
+          res.status(500).json({
+          message: 'An error occurred.',
+          error: error
+        });
+      })
     })
     .catch(error => {
+      console.log(error);
       res.status(500).json({
         message: 'Product not found.',
         error: { product: 'Product not found.'}

@@ -1,4 +1,4 @@
-import { Injectable, Output, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subscription, Subject, Observable, throwError } from 'rxjs';
 
@@ -10,29 +10,33 @@ const apiBaseUrl = 'http://localhost:3000/api'
   providedIn: 'root'
 })
 export class ProductService {
-  constructor(private http: HttpClient) {
-    this.http.get<Product[]>(`${apiBaseUrl}/products`).subscribe(productList: Product[] => {
-      this.products = productList;
-      this.productListChangedEvent.next(this.products.slice());
-    }, (error: any) => { console.log(error); });
-  }
-
-  @Output() productSelectedEvent: EventEmitter<Product> = new EventEmitter<Product>();
-
-
-  // PROPERTIES
-
   productListChangedEvent = new Subject<Product[]>();
   products: Product[] = [];
+  categories = ['Fruits and Vegetables', 'Bakery', 'Deli', 'Dairy', 'Refrigerated Foods', 'Frozen Foods', 'Snacks', 'Miscellaneous Foods', 'Non-Food Items']
+
+  constructor(private http: HttpClient) {
+    this.http.get<Product[]>(`${apiBaseUrl}/products`).subscribe((productList: Product[]) => {
+        let sortedByName = productList.sort((a, b) => {
+          if (a.name.toLowerCase() < b.name.toLowerCase()) { return -1; }
+          else { return 1; }
+        })
+        let sortedByNameAndCategory = sortedByName.sort((a, b) => {
+          if (a.category < b.category) { return -1; }
+          else { return 1; }
+        })
+        this.products = sortedByNameAndCategory;
+        this.productListChangedEvent.next(this.products.slice());
+    }, (error: any) => { console.log(error); });
+  }
 
 
   // METHODS
 
-  getProducts(): Observable<Product[]> {
+  getProducts(): Product[] {
     return this.products.slice();
   }
 
-  getProduct(id: number): Observable<Product> {
+  getProduct(id: number): Product {
     for (const product of this.products) {
       if (product.id == id) return product;
     }
@@ -47,7 +51,7 @@ export class ProductService {
     this.http.post<{ message: string, product: Product }>(`${apiBaseUrl}/products`, newProduct, { headers: headers })
       .subscribe(
         (responseData) => {
-          this.products.push(responseData.contact);
+          this.products.push(responseData.product);
           this.productListChangedEvent.next(this.products.slice());
         }
       );
@@ -83,6 +87,4 @@ export class ProductService {
       );
   }
 
-
-  constructor() { }
 }

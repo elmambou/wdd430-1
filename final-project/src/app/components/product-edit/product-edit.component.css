@@ -1,0 +1,15 @@
+form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  border-bottom: 1px solid var(--gray-90);
+  padding: 1em 0;
+}
+form > div {
+  margin: 10px;
+  white-space: nowrap;
+  display: flex;
+}
+input, select, button {
+  margin-left: 0.5em;
+}

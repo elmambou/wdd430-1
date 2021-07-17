@@ -1,5 +1,44 @@
+/* COLORS */
+
+:root {
+  /* Light colors */
+  --gray-95: hsl(0, 0%, 95%);
+  --gray-90: hsl(0, 0%, 90%);
+  --gray-67: hsl(0, 0%, 67%);
+  --gray-50: hsl(0, 0%, 50%);
+  --gray-20: hsl(0, 0%, 20%);
+  --header-bg: brown;
+  --header-text-color: white;
+  --page-bg: hsl(0, 0%, 100%);
+  --text-color: hsl(0, 0%, 0%);
+  --link-normal: hsl(16, 100%, 37%);
+  --accent-color: firebrick;
+  --selection-color: mistyrose;
+}
+@media (prefers-color-scheme: dark) { :root {
+  /* Dark colors */
+  --gray-95: hsl(0, 0%, 25%);
+  --gray-90: hsl(0, 0%, 30%);
+  --gray-67: hsl(0, 0%, 53%);
+  --gray-50: hsl(0, 0%, 60%);
+  --gray-20: hsl(0, 0%, 90%);
+  --header-bg: firebrick;
+  --header-text-color: white;
+  --page-bg: hsl(0, 0%, 17%);
+  --text-color: var(--gray-20);
+  --link-normal: hsl(40,100%,50%);
+  --accent-color: tomato;
+  --selection-color: salmon;
+}}
+:root {
+  accent-color: var(--accent-color);
+}
+
+::selection { background-color: var(--selection-color); }
 html, body {
   margin: 0; padding: 0;
+  background-color: var(--page-bg);
+  color: var(--text-color);
   font-family: 'Tahoma', sans-serif;
 }
-a { color: brown; }
+a { color: var(--link-normal); }

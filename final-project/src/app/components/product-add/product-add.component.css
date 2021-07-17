@@ -1,0 +1,9 @@
+form {
+  text-align: center;
+}
+form > div {
+  margin: 10px;
+}
+input, select, button {
+  margin-left: 0.5em;
+}

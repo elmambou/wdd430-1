@@ -1,1 +1,36 @@
-<p>product-add works!</p>
+<form (ngSubmit)="onSubmit(f)" #f="ngForm">
+  <h2>Add Item</h2>
+  <p>(both fields are required)</p>
+  <div>
+    <label for="name">Name:</label>
+    <input
+      type="text"
+      class="form-control required"
+      id="name"
+      name="name"
+      [ngModel]="product.name"
+      #name="ngModel"
+      required
+    >
+  </div>
+
+  <div>
+    <label for="category">Category:</label>
+    <select
+      class="form-control required"
+      id="category"
+      name="category"
+      [ngModel]="product.category"
+      #category="ngModel"
+      required
+    >
+      <option *ngFor="let category of productService.categories" [value]="category">{{category}}</option>
+    </select>
+  </div>
+
+  <div>
+    <button class="btn btn-success" type="submit" [disabled]="!f.valid">Save</button>
+    <button class="btn btn-primary" type="button" (click)="onCancel()">Cancel</button>
+  </div>
+
+</form>
